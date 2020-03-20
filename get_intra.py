@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ##
 ## EPITECH PROJECT, 2020
 ## epilight
@@ -29,9 +30,9 @@ def time_to_sec(time):
 def is_hour_between_start_end(hour_checked, start, end, offset):
     start = start.split()
     end = end.split()
-    hour_checked = time_to_sec(hour_checked) - offset
-    start = time_to_sec(start[1])
-    end = time_to_sec(end[1])
+    hour_checked = time_to_sec(hour_checked)
+    start = time_to_sec(start[1]) - offset
+    end = time_to_sec(end[1]) - offset
     if hour_checked < end and hour_checked > start:
         return (True)
     else:
@@ -43,27 +44,29 @@ def is_room_occupied(infos):
     tmp = tmp.split()
     tmp2 = infos["start"].split()
     tmp3 = tmp[1].split('.')
-    if tmp2[0] == tmp2[0]:
+    if tmp2[0] == tmp[0]:
         if is_hour_between_start_end(tmp3[0], infos["start"], infos["end"], 0) == True:
             return(1)
-        if is_hour_between_start_end(tmp3[0], infos["start"], infos["end"], 1800):
+        if is_hour_between_start_end(tmp3[0], infos["start"], infos["end"], 1800) == True:
             return (2)
     return (0)
 
 def epiLight(intranet, data):
     while True:
+        print(colored("NEW CHECK", 'blue'))
         for i in range(len(data)):
+            is_room_taken = 0
             infos = intranet.get_room_info(data[i]["ROOM"])
             for n in range(len(infos)):
-                is_room_taken = is_room_occupied(infos[n])
-                if  is_room_taken == 1:
-                    print(colored("Room {} is occupied".format(infos[n]["room_name"]), 'red'))
-                    break
-                elif is_room_taken == 2:
-                    print(colored("Room {} wille be occupied in 30 minutes".format(infos[n]["room_name"]), 'yellow'))
-                    break
-                else:
-                    print(colored("Room {} is not occupied".format(infos[n]["room_name"]), 'green'))
+                tmp = is_room_occupied(infos[n])
+                if tmp >= is_room_taken:
+                    is_room_taken = tmp
+            if  is_room_taken == 1:
+                print(colored("Room {} is occupied".format(data[i]["ROOM"]), 'red'))
+            elif is_room_taken == 2:
+                print(colored("Room {} will be occupied in 30 minutes".format(data[i]["ROOM"]), 'yellow'))
+            else:
+                print(colored("Room {} is not occupied".format(data[i]["ROOM"]), 'green'))
         time.sleep(300)
 
 def main():
