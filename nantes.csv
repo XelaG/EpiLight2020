@@ -1,0 +1,9 @@
+LED_IP,ROOM
+192.168.16.7,FR/NAN/Alger/Tatooine
+192.168.16.11,FR/NAN/Alger/Gotham
+192.168.16.12,FR/NAN/Alger/Gallifrey
+192.168.16.13,FR/NAN/Alger/Westeros
+192.168.16.14,FR/NAN/Alger/Torvalds
+192.168.16.16,FR/NAN/Alger/La-Comte
+192.168.16.18,FR/NAN/Alger/Mordor
+192.168.16.16/192.168.16.18,FR/NAN/Alger/Mordor-Comte

@@ -57,13 +57,13 @@ def epiLight(intranet, data):
             for n in range(len(infos)):
                 is_room_taken = is_room_occupied(infos[n])
                 if  is_room_taken == 1:
-                    print("Room {} is occupied".format(infos[n]["room_name"]))
+                    print(colored("Room {} is occupied".format(infos[n]["room_name"]), 'red'))
                     break
                 elif is_room_taken == 2:
-                    print("Room {} wille be occupied in 30 minutes".format(infos[n]["room_name"]))
+                    print(colored("Room {} wille be occupied in 30 minutes".format(infos[n]["room_name"]), 'yellow'))
                     break
                 else:
-                    print("Room {} is not occupied".format(infos[n]["room_name"]))
+                    print(colored("Room {} is not occupied".format(infos[n]["room_name"]), 'green'))
         time.sleep(300)
 
 def main():
