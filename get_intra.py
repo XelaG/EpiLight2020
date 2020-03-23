@@ -57,16 +57,22 @@ def epiLight(intranet, data):
         for i in range(len(data)):
             is_room_taken = 0
             infos = intranet.get_room_info(data[i]["ROOM"])
+            if infos == "error":
+                print("Could not retrive room infos")
+                continue
             for n in range(len(infos)):
                 tmp = is_room_occupied(infos[n])
                 if tmp >= is_room_taken:
                     is_room_taken = tmp
             if  is_room_taken == 1:
-                print(colored("Room {} is occupied".format(data[i]["ROOM"]), 'red'))
+                print(colored("Room {} is occupied".format(data[i]["ROOM"]), 'red'), end=" ")
+                print(colored("Sending RED ON to {}".format(data[i]["LED_IP"]), 'red'))
             elif is_room_taken == 2:
-                print(colored("Room {} will be occupied in 30 minutes".format(data[i]["ROOM"]), 'yellow'))
+                print(colored("Room {} will be occupied in 30 minutes".format(data[i]["ROOM"]), 'yellow'), end=" ")
+                print(colored("Sending YELLOW ON to {}".format(data[i]["LED_IP"]), 'yellow'))
             else:
-                print(colored("Room {} is not occupied".format(data[i]["ROOM"]), 'green'))
+                print(colored("Room {} is not occupied".format(data[i]["ROOM"]), 'green'), end=" ")
+                print(colored("Sending GREEN ON to {}".format(data[i]["LED_IP"]), 'green'))
         time.sleep(300)
 
 def main():

@@ -10,6 +10,7 @@ from datetime import datetime
 from urllib import request, parse
 import json
 import time
+from urllib.error import URLError, HTTPError
 
 class intra(object):
 
@@ -27,14 +28,25 @@ class intra(object):
         date = date.split()
         path = self.url + self.token + self.planning_path + "&start=" + date[0] + "&end=" + date[0]
         data = self.get_data(path)
+        if data == "error":
+            print("DATA COULD NOT BE REFRESHED")
+            return
         with open(self.file_path, 'w') as f:
             json.dump(data, f)
         print("DATA REFRESHED")
 
     def get_data(self, path):
-        res = request.urlopen(path)
-        data = json.loads(res.read())
-        return (data)
+        try:
+            res = request.urlopen(path)
+        except HTTPError as e:
+            print("Error http : {}".format(e))
+            return("error")
+        except URLError as e:
+            print("Error url : {}".format(e))
+            return("error")
+        else:
+            data = json.loads(res.read())
+            return (data)
 
     def get_room_info(self, room_name):
         
@@ -43,8 +55,12 @@ class intra(object):
         timediff = datetime.now() - self.last_update_time
         if timediff.total_seconds() > 3600:
             self.refresh_data()
-        with open(self.file_path, 'r') as myfile:
-            tmp = myfile.read()
+        try:
+            with open(self.file_path, 'r') as myfile:
+                tmp = myfile.read()
+        except EnvironmentError:
+            print("Could not open file")
+            return ("error")
         data = json.loads(tmp)
         list_of_dict = []
         for i in range(len(data)):
