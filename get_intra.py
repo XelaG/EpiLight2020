@@ -67,10 +67,16 @@ def is_room_occupied(infos):
 
 def sendOn(color, room):
     # global ser
-    message = ""
-    message = str(color.name) + " " + str(room) + "\0"
-    print(message)
-    # ser.write(message)
+    if room.find("/") != -1:
+        room = room.split("/")
+        for i in range(0, len(room)):
+            message = str(color.name) + " " + str(room[i]) + "\0"
+            print(message)
+            # ser.write(message)
+    else:
+        message = str(color.name) + " " + str(room) + "\0"
+        print(message)
+        # ser.write(message)
 
 def epiLight(intranet, data):
     while True:
@@ -92,6 +98,7 @@ def epiLight(intranet, data):
                 print(colored("Room {} will be occupied in 30 minutes".format(data[i]["ROOM"]), 'yellow'), end=" ")
                 print(colored("Sending 'YELLOW ON' to the ESP", 'yellow'))
             else:
+                sendOn(Color.green, data[i]["LED_NAME"])
                 print(colored("Room {} is not occupied".format(data[i]["ROOM"]), 'green'), end=" ")
                 print(colored("Sending 'GREEN ON' to the ESP", 'green'))
         time.sleep(300)
