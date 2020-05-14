@@ -66,6 +66,8 @@ class intra(object):
         for i in range(len(data)):
             if "room" not in data[i]:
                 continue
+            elif data[i]["room"] == None:
+                continue
             elif "code" not in data[i]["room"]:
                 continue
             else:

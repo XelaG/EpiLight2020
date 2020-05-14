@@ -9,12 +9,26 @@
 from urllib import request, parse
 import json
 import sys
+import serial
+import enum
 from termcolor import colored
 import pandas
 from wrapper import intra_wrapper
 from datetime import datetime
 import time
 
+# ser = serial.Serial(
+#     port='/dev/ttyUSB1',
+#     baudrate=115200,
+#     parity=serial.PARITY_ODD,
+#     stopbits=serial.STOPBITS_TWO,
+#     bytesize=serial.SEVENBITS
+# )
+
+class Color(enum.Enum):
+    green = 0
+    yellow = 1
+    red = 2
 
 def create_dictionary(filename):
     my_data = pandas.read_csv(filename, sep=',', index_col=False)
@@ -51,6 +65,13 @@ def is_room_occupied(infos):
             return (2)
     return (0)
 
+def sendOn(color, room):
+    # global ser
+    message = ""
+    message = str(color.name) + " " + str(room) + "\0"
+    print(message)
+    # ser.write(message)
+
 def epiLight(intranet, data):
     while True:
         print(colored("NEW CHECK", 'blue'))
@@ -62,17 +83,17 @@ def epiLight(intranet, data):
                 continue
             for n in range(len(infos)):
                 tmp = is_room_occupied(infos[n])
-                if tmp >= is_room_taken:
+                if tmp > is_room_taken:
                     is_room_taken = tmp
             if  is_room_taken == 1:
                 print(colored("Room {} is occupied".format(data[i]["ROOM"]), 'red'), end=" ")
-                print(colored("Sending RED ON to {}".format(data[i]["LED_IP"]), 'red'))
+                print(colored("Sending 'RED ON' to the ESP", 'red'))
             elif is_room_taken == 2:
                 print(colored("Room {} will be occupied in 30 minutes".format(data[i]["ROOM"]), 'yellow'), end=" ")
-                print(colored("Sending YELLOW ON to {}".format(data[i]["LED_IP"]), 'yellow'))
+                print(colored("Sending 'YELLOW ON' to the ESP", 'yellow'))
             else:
                 print(colored("Room {} is not occupied".format(data[i]["ROOM"]), 'green'), end=" ")
-                print(colored("Sending GREEN ON to {}".format(data[i]["LED_IP"]), 'green'))
+                print(colored("Sending 'GREEN ON' to the ESP", 'green'))
         time.sleep(300)
 
 def main():
