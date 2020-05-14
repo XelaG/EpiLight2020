@@ -1,6 +1,6 @@
-LED_IP,ROOM
-ip,room
-ip,room
-ip,room
-ip,room
-ip/ip, room
+LED_NAME,ROOM
+name,room
+name,room
+name,room
+name,room
+name/name, room
