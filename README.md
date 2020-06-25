@@ -13,7 +13,7 @@ After this create your config file by following the next part 😀.
 
 ## Creating your config
 
-To create your configuration, use the [example.csv](https://github.com/XelaG/EpiLight2020/blob/master/example.csv) file. You can assign multiples LEDs to a single room by separating them with a "/". Be careful to not add this character to the LED names because it will break the program 😢.
+To create your configuration, use the [example.json](https://github.com/XelaG/EpiLight2020/blob/master/exemple.json) file.
 
 
 ## Usage
