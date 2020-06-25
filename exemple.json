@@ -1,0 +1,22 @@
+{
+  "ROOMNAME": {
+    "rooms": [
+      "ROOM_NAME_ON_INTRA",
+      "ROOM_NAME_ON_INTRA_2"
+    ],
+    "esp_uuids": [
+      "ESP_UUID",
+      "ESP_UUID2"
+    ]
+  },
+  "ROOMNAME2": {
+    "rooms": [
+      "ROOM_NAME_ON_INTRA",
+      "ROOM_NAME_ON_INTRA_2"
+    ],
+    "esp_uuids": [
+      "ESP_UUID",
+      "ESP_UUID2"
+    ]
+  }
+}

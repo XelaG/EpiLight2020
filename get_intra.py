@@ -17,23 +17,22 @@ from wrapper import intra_wrapper
 from datetime import datetime
 import time
 
-# ser = serial.Serial(
-#     port='/dev/ttyUSB1',
-#     baudrate=115200,
-#     parity=serial.PARITY_ODD,
-#     stopbits=serial.STOPBITS_TWO,
-#     bytesize=serial.SEVENBITS
-# )
-
 class Color(enum.Enum):
     green = 0
     yellow = 1
     red = 2
 
 def create_dictionary(filename):
-    my_data = pandas.read_csv(filename, sep=',', index_col=False)
-    list_of_dicts = [item for item in my_data.T.to_dict().values()]
-    return list_of_dicts
+    while True:
+        try:
+            with open(filename, 'r') as myfile:
+                tmp = myfile.read()
+            break
+        except EnvironmentError:
+            print("Could not open file")
+            filename = input("Please enter correct filepath : ")
+    parsed_json = json.loads(tmp)
+    return (parsed_json)
 
 def time_to_sec(time):
     time = str(time)
@@ -65,42 +64,31 @@ def is_room_occupied(infos):
             return (2)
     return (0)
 
-def sendOn(color, room):
-    # global ser
-    if room.find("/") != -1:
-        room = room.split("/")
-        for i in range(0, len(room)):
-            message = str(color.name) + " " + str(room[i]) + "\0"
-            print(message)
-            # ser.write(message)
-    else:
-        message = str(color.name) + " " + str(room) + "\0"
-        print(message)
-        # ser.write(message)
+def sendOn(color, item):
+    for i in range(len(item[1]["esp_uuids"])):
+        print(colored("Send {} to ESP {} for room {}".format(color.name, item[1]["esp_uuids"][i], item[0]), color.name))
 
 def epiLight(intranet, data):
     while True:
         print(colored("NEW CHECK", 'blue'))
-        for i in range(len(data)):
+        for item in data.items():
             is_room_taken = 0
-            infos = intranet.get_room_info(data[i]["ROOM"])
-            if infos == "error":
-                print("Could not retrive room infos")
-                continue
-            for n in range(len(infos)):
-                tmp = is_room_occupied(infos[n])
-                if tmp > is_room_taken:
-                    is_room_taken = tmp
-            if  is_room_taken == 1:
-                print(colored("Room {} is occupied".format(data[i]["ROOM"]), 'red'), end=" ")
-                print(colored("Sending 'RED ON' to the ESP", 'red'))
-            elif is_room_taken == 2:
-                print(colored("Room {} will be occupied in 30 minutes".format(data[i]["ROOM"]), 'yellow'), end=" ")
-                print(colored("Sending 'YELLOW ON' to the ESP", 'yellow'))
-            else:
-                sendOn(Color.green, data[i]["LED_NAME"])
-                print(colored("Room {} is not occupied".format(data[i]["ROOM"]), 'green'), end=" ")
-                print(colored("Sending 'GREEN ON' to the ESP", 'green'))
+            for i in range(len(item[1]["rooms"])):
+                infos = intranet.get_room_info(item[1]["rooms"][i])
+                if infos == "error":
+                    print("Could not retrieve room infos")
+                    continue
+                for n in range(len(infos)):
+                    tmp = is_room_occupied(infos[n])
+                    if tmp > is_room_taken:
+                        is_room_taken = tmp
+                if i == len(item[1]["rooms"]) - 1:
+                    if  is_room_taken == 1:
+                        sendOn(Color.red, item)
+                    elif is_room_taken == 2:
+                        sendOn(Color.yellow, item)
+                    else:
+                        sendOn(Color.green, item)
         time.sleep(300)
 
 def main():
